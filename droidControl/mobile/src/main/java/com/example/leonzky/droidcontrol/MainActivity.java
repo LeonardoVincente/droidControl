@@ -2,16 +2,24 @@ package com.example.leonzky.droidcontrol;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.samsung.multiscreen.device.Device;
+import com.samsung.multiscreen.device.DeviceAsyncResult;
+import com.samsung.multiscreen.device.DeviceError;
+
+import java.util.List;
 
 public class MainActivity extends Activity {
-
+    private static final String LOGTAG = "DiscoverActivity";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        // something
+        findLocalDevices();
     }
 
     @Override
@@ -35,4 +43,23 @@ public class MainActivity extends Activity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    private void findLocalDevices() {
+       Log.d(LOGTAG, "findLocalDevices()");
+
+
+        Device.search(new DeviceAsyncResult<List<Device>>() {
+            @Override
+            public void onResult(final List<Device> devices) {
+                Log.d(LOGTAG, "findLocalDevices() -> DONE: count: " + devices.size());
+            }
+
+            @Override
+            public void onError(final DeviceError error) {
+
+            }
+        });
+    }
+
+
 }
