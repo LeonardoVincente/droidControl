@@ -1,7 +1,10 @@
 package com.example.leonzky.droidcontrol;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,7 +25,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         // something
         //findLocalDevices();
-        
+
     }
 
     @Override
@@ -76,16 +79,31 @@ public class MainActivity extends Activity {
         Log.d(LOGTAG, "getting in with code");
 
         Device.getByCode(pinCode, new DeviceAsyncResult<Device>() {
-                // success callback
-              public void onResult(final Device device) {
-                    Log.d(LOGTAG, "findDeviceByPinCode() onResult() device:\n" + device);
-              }
-                // error callback
-              public void onError(DeviceError error) {
-                    Log.d(LOGTAG, "findDeviceByPinCode onError() error: " + error);
-              }
+            // success callback
+            public void onResult(final Device device) {
+                Log.d(LOGTAG, "findDeviceByPinCode() onResult() device:\n" + device);
+                TVDevice.getInstance().setDevice(device);
+                Intent controlIntent = new Intent( MainActivity.this, mainControl.class );
+                startActivity(controlIntent);
+            }
+
+            // error callback
+            public void onError(DeviceError error) {
+                Log.d(LOGTAG, "findDeviceByPinCode onError() error: " + error);
+
+                runOnUIThread(new Runnable() {
+                    public void run() {
+                        EditText pcEditText = (EditText) findViewById(R.id.editText);
+                        pcEditText.setText("");
+                    }
+                });
+
+            }
         });
     }
 
-
+    public void runOnUIThread(Runnable runnable) {
+        Handler mainHandler = new Handler(Looper.getMainLooper());
+        mainHandler.post(runnable);
+    }
 }
