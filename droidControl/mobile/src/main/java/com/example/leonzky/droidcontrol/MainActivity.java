@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
 
 import com.samsung.multiscreen.device.Device;
 import com.samsung.multiscreen.device.DeviceAsyncResult;
@@ -19,7 +21,8 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         // something
-        findLocalDevices();
+        //findLocalDevices();
+        
     }
 
     @Override
@@ -58,6 +61,29 @@ public class MainActivity extends Activity {
             public void onError(final DeviceError error) {
 
             }
+        });
+    }
+
+    public void sendPincode(View view){
+        EditText pcEditText = (EditText)findViewById(R.id.editText);
+        String pincode = pcEditText.getText().toString();
+        Log.d(LOGTAG, "Send Pincode button is asked " + pincode );
+        getCode(pincode);
+    }
+
+    private void getCode(String pinCode){
+        //final String pinCode = "918853";
+        Log.d(LOGTAG, "getting in with code");
+
+        Device.getByCode(pinCode, new DeviceAsyncResult<Device>() {
+                // success callback
+              public void onResult(final Device device) {
+                    Log.d(LOGTAG, "findDeviceByPinCode() onResult() device:\n" + device);
+              }
+                // error callback
+              public void onError(DeviceError error) {
+                    Log.d(LOGTAG, "findDeviceByPinCode onError() error: " + error);
+              }
         });
     }
 
