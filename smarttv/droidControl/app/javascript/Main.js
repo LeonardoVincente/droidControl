@@ -1,6 +1,16 @@
 var widgetAPI = new Common.API.Widget();
 var tvKey = new Common.API.TVKeyValue();
 
+
+var widgetAPI = new Common.API.Widget();
+var tvKey = new Common.API.TVKeyValue();
+var pluginAPI = new Common.API.Plugin();
+var vol = null;
+var userMute = null;
+var ObjectAudio = null;
+var ObjectTVMW = null;
+var NNaviPlugin = null;
+
 var Main =
 {
 
@@ -12,31 +22,42 @@ Main.onLoad = function()
 	// Enable key event processing
 	ms = window.webapis.multiscreen;
     App = {};
-    /*
-    ms.Device.getCurrent(function(device){
-        var channelId = "myChannelId";
-        var clientAttributes = {name:"Alan"};
-
-        device.openChannel(channelId, clientAttributes, function(channel) {
-
-            // Save a reference to the channel
-            // Add event listeners to channel
-
-            // Notify the TV that your application is "ready"
-            var widgetAPI = new Common.API.Widget();
-            widgetAPI.sendReadyEvent();
-            console.log("inside open channel");
-        });
-    });
-    */
 	this.enableKeys();
-	widgetAPI.sendReadyEvent();
-	
 	
 	initialize();
-
 	App.init();
+	
+	pluginAPI.registIMEKey();
+	ObjectTVMW = document.getElementById('pluginObjectTVMW');
+    ObjectAudio = document.getElementById('pluginAudio');
+    NNaviPlugin = document.getElementById('pluginObjectNNavi');
+    
+    widgetAPI.sendReadyEvent();
+    window.onShow = function () {
+    		alert('[APPS] : setBannerstate ');
+            setTimeout(function(){
+                pluginAPI.unregistKey(tvKey.KEY_VOL_UP);
+                pluginAPI.unregistKey(tvKey.KEY_VOL_DOWN);
+                pluginAPI.unregistKey(tvKey.KEY_MUTE);
+                pluginAPI.unregistKey(tvKey.KEY_PANEL_VOL_UP);
+                pluginAPI.unregistKey(tvKey.KEY_PANEL_VOL_DOWN);
+                pluginAPI.unregistKey(7); //unregister volume up button
+                pluginAPI.unregistKey(11); //unregister volume down button
+                pluginAPI.unregistKey(27); //unregister mute button
+             
+            },100);
+            NNaviPlugin.SetBannerState(1); //this is to see the banner Volume
+       };
+        userMute = ObjectAudio.GetUserMute();
+        vol = ObjectAudio.GetVolume();
+        alert('-----volume::'+ObjectAudio.GetVolume()+'------mute::'+ObjectAudio.GetUserMute()); //show in console Volume State
 };
+
+
+function printAudioStatus(){
+    alert('-----volume::'+ObjectAudio.GetVolume()+'------mute::'+ObjectAudio.GetUserMute()); //show in console Volume State
+    console.log('-----volume::'+ObjectAudio.GetVolume()+'------mute::'+ObjectAudio.GetUserMute());
+}
 
 function initialize(){
     App.init = function(){
@@ -128,6 +149,8 @@ App.onDeviceRetrieved = function(device){
     	 console.log("on client message " + msg)
     	 var last = document.getElementById("lastMessage");
     	 last.innerHTML = msg;
+    	 getMessage(msg);
+    	 
      });
      
      /*
@@ -181,6 +204,15 @@ Main.keyDown = function()
 		case tvKey.KEY_ENTER:
 		case tvKey.KEY_PANEL_ENTER:
 			alert("ENTER");
+			break;
+		case 11:
+			
+			ObjectAudio.SetVolume(10);
+			printAudioStatus();
+			break;
+		case 7:
+			ObjectAudio.SetVolume(10);
+			printAudioStatus();
 			break;
 		default:
 			alert("Unhandled key");

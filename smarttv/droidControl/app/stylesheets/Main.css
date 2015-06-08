@@ -12,3 +12,9 @@ body
 	height: 540px;
 	background: none;
 }
+
+#mainContainer{
+	background-color: gray;
+	position: relative;
+	bottom:0px;
+}

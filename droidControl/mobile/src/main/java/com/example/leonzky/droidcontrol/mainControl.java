@@ -5,14 +5,15 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import com.samsung.multiscreen.channel.Channel;
 import com.samsung.multiscreen.channel.ChannelClient;
+import com.samsung.multiscreen.channel.IChannelListener;
 import com.samsung.multiscreen.device.Device;
 import com.samsung.multiscreen.device.DeviceAsyncResult;
 import com.samsung.multiscreen.device.DeviceError;
-import com.samsung.multiscreen.channel.IChannelListener;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -88,6 +89,7 @@ public class mainControl extends Activity  implements IChannelListener{
                 });
 
             }
+
             public void onError(final DeviceError error) {
 
                 TVDevice.getInstance().runOnUIThread(new Runnable() {
@@ -139,4 +141,19 @@ public class mainControl extends Activity  implements IChannelListener{
     public void onClientMessage(ChannelClient channelClient, String s) {
         Log.d(LOGTAG, "onClientMessage() " + s);
     }
+
+    public void changeVolUp(View view){
+        channel.sendToAll("VolUp");
+    }
+
+    public void changeVolDown(View view){
+        channel.sendToAll("VolDown");
+    }
+    public void changeChUp(View view){
+        channel.sendToAll("ChUp");
+    }
+    public void changeChDown(View view){
+        channel.sendToAll("ChDown");
+    }
+
 }
